@@ -32,10 +32,17 @@ model Vote {
 }
 
 model Question {
-  id String @id @default(uuid())
+  id          String @id @default(uuid())
   description String
 }
 
 model Exam {
   id String @id @default(uuid())
+}
+
+// Model de token's inválidos. Ainda vou criar um método de logout.
+model BlackListToken {
+  id     String  @id @default(uuid())
+  token  String
+  userId String?
 }
