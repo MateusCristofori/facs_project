@@ -7,4 +7,8 @@ export class AuthUserController {
 	static dashboardHandler = async (req: IRequestWithToken, res: Response) => {
 		AuthUserService.dashboard(req, res);
 	};
+
+	static userLogoutHandler = async (req: IRequestWithToken, res: Response) => {
+		AuthUserService.userLogout(req, res);
+	};
 }
