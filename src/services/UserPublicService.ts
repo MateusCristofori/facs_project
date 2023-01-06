@@ -7,6 +7,7 @@ import { CreateUserDTO } from "../dtos/CreateUserDTO";
 import { UserLoginDTO } from "../dtos/UserLoginDTO";
 import { BadRequestError, NotFoundError } from "../helpers/errors/ApiErrors";
 import { generatedPasswordHash } from "../helpers/generatedPasswordHash";
+import { CheckUserCredentialsValidation } from "../validations/CheckUserCredentialsValidation";
 
 
 export class UserPublicService {
@@ -22,6 +23,10 @@ export class UserPublicService {
 	static userLogin = async (req: Request, res: Response) => {
 		const { email, password }: UserLoginDTO = req.body;
 
+		// Validações das informações passadas pelo corpo da requisição.
+		CheckUserCredentialsValidation.checkUserEmail(email);
+		CheckUserCredentialsValidation.checkUserPassword(password);
+
 		const user = await prisma.user.findFirst({
 			where: { email: email }
 		});
@@ -30,7 +35,7 @@ export class UserPublicService {
 			throw new NotFoundError("Usuário não encontrado!");
 		}
 
-		const passwordMatch = await bcrypt.compare(password, user!.password);
+		const passwordMatch = await bcrypt.compare(password, user.password);
 
 		if(!passwordMatch) {
 			throw new BadRequestError("Senha incorreta!");
@@ -38,9 +43,9 @@ export class UserPublicService {
 
 		const token = jwt.sign({
 			user: {
-				id: user?.id,
-				name: user?.username,
-				email: user?.email
+				id: user.id,
+				name: user.username,
+				email: user.email
 			}
 		}, process.env.SECRET as string, {
 			expiresIn: "1d"
@@ -49,9 +54,9 @@ export class UserPublicService {
 		res.status(200).json({
 			auth: true, 
 			user: { 
-				id: user?.id, 
-				name: user?.username, 
-				email: user?.email
+				id: user.id, 
+				name: user.username, 
+				email: user.email
 			}, 
 			token
 		});
@@ -61,10 +66,10 @@ export class UserPublicService {
 	static registerNewUser = async (req: Request, res: Response) => {
 		const { name, email, password }: CreateUserDTO = req.body;
 
-		if(!name || !email || !password) {
-			throw new BadRequestError("Todas as informações precisam ser preenchidas!");
-		}
-		
+		CheckUserCredentialsValidation.checkUserName(name);
+		CheckUserCredentialsValidation.checkUserEmail(email);
+		CheckUserCredentialsValidation.checkUserPassword(password);
+
 		const passwordHash = await generatedPasswordHash(password);
 
 		const newUser = await prisma.user.create({
