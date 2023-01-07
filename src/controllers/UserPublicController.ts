@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
 import { UserPublicService } from "../services/UserPublicService";
 
-
-export class UserPublicController {
-
-	static getAllUsersHandler = async (req: Request, res: Response) => {
-		UserPublicService.getAllUsers(req, res);
-	};
-	
+class UserPublicController {
 	static userLoginHandler = async (req: Request, res: Response) => {
 		UserPublicService.userLogin(req, res);
 	};
@@ -16,3 +10,5 @@ export class UserPublicController {
 		UserPublicService.registerNewUser(req, res);
 	};
 }
+
+export default UserPublicController;
