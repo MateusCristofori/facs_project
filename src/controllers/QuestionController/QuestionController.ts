@@ -93,7 +93,7 @@ export default class QuestionController {
 			return res.status(404).json({ error: "Usuário não encontrado!" });
 		}
 
-		if (question.post.id !== author.id ) {
+		if (question.post.authorId !== author.id ) {
 			return res.status(403).json({
 				error: "somente o autor da pergunta pode modifica-la"
 			});
@@ -142,7 +142,7 @@ export default class QuestionController {
 			return res.status(404).json("Usuário não encontrado!");
 		}
 
-		if (question.post.id !== author.id ) {
+		if (question.post.authorId !== author.id ) {
 			return res.status(403).json({ error: "Somente o autor da pergunta pode modifica-la." });
 		}
 
