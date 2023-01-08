@@ -1,9 +1,8 @@
-import { IRequestWithToken } from "../../token/IRequestWithToken";
-import db from "../../database/prisma";
-import { BadRequestError, NotFoundError, UnauthorizedError } from "../../helpers/errors/ApiErrors";
 import { Response } from "express";
+import db from "../../database/prisma";
 import { createCommentDTO } from "../../dtos/CreateCommentDTO";
 import { createPost } from "../../helpers/create_post/createPosts";
+import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 class CommentController {
 	async retrieveComment(req: IRequestWithToken, res: Response)  {
@@ -14,7 +13,7 @@ class CommentController {
 		});
 
 		if(!comment) {
-			throw new NotFoundError("Comentário não encontrado");
+			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
 
 		res.status(200).json(comment);
@@ -28,7 +27,7 @@ class CommentController {
 
 	async createComment(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
-			throw new UnauthorizedError("Token de autorização inválido!");
+			return res.status(403).json({error: "Token de validação inválido!"});
 		}
 		const author_id = req.token.user.id;
 
@@ -37,7 +36,7 @@ class CommentController {
 		});
 
 		if(!author) {
-			throw new NotFoundError("Usuário não encontrado!");
+			return res.status(404).json({error: "Usuário não encontrado!"});
 		}
 
 		const { content }: createCommentDTO = req.body;
@@ -55,7 +54,7 @@ class CommentController {
 	
 	async updateComment(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
-			throw new UnauthorizedError("Token de autorização inválido!");
+			return res.status(403).json({error: "Token de autorização inválido!"});
 		}		
 		
 		const author_id = req.token.user.id;
@@ -65,13 +64,14 @@ class CommentController {
 		});
 
 		if(!author) {
-			throw new NotFoundError("Usuário não encontrado!");
+			return res.status(404).json({error: "Usuário não encontrado!"});
 		}
 
 		const comment_id = req.params.id;
 
 		if(!comment_id) {
-			throw new NotFoundError("Comentário não encontrado!");
+			return res.status(404).json({error: "Comentário não encontrado!"});
+
 		}
 
 		const { content }: createCommentDTO = req.body;
@@ -95,7 +95,7 @@ class CommentController {
 		const comment_id = req.params.id;
 
 		if(!comment_id) {
-			throw new NotFoundError("Comentário não encontrado!");
+			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
 
 		const comment = await db.comment.delete({

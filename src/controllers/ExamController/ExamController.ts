@@ -1,13 +1,12 @@
 import { Response } from "express";
 import db from "../../database/prisma";
 import { createPost } from "../../helpers/create_post/createPosts";
-import { NotFoundError, UnauthorizedError } from "../../helpers/errors/ApiErrors";
 import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 class ExamController {
 	async createQuestions(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
-			throw new UnauthorizedError("token de autorização não encontrado.");
+			return res.status(403).json({error: "Token de validação inválido!"});
 		}
 	
 		const author_id = req.token.user.id;
@@ -17,7 +16,7 @@ class ExamController {
 		});
 
 		if(!author) {
-			throw new NotFoundError("Usuário não encontrado!");
+			return res.status(404).json({error: "Usuário não encontrado!"});
 		}
 
 		const { content, examId } = req.body;

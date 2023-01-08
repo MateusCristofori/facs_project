@@ -8,5 +8,9 @@ export const middlewareError = async (error: Error & Partial<ApiErrors>, req: Re
 
 	const errorMessage = statusCode ? error.message : "Internal server error"; // Caso o status code seja true, se tiver valor, vamos entender que é um erro "customizado" e vamos pegar a mensagem desse erro. Caso não tenha, será simplesmente um internal server erro com status code 500.
 
-	res.status(statusCode).json({errorMessage});
+	if(typeof error != "undefined") {
+		return res.status(statusCode).json({errorMessage});
+	}
+
+	next();
 };
