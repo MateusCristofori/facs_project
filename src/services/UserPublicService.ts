@@ -12,11 +12,9 @@ import { CheckUserCredentialsValidation } from "../validations/CheckUserCredenti
 
 export class UserPublicService {
 
-	// Funcional!
 	static userLogin = async (req: Request, res: Response) => {
 		const { email, password }: UserLoginDTO = req.body;
 
-		// Validações das informações passadas pelo corpo da requisição.
 		CheckUserCredentialsValidation.checkUserEmail(email);
 		CheckUserCredentialsValidation.checkUserPassword(password);
 
@@ -55,7 +53,6 @@ export class UserPublicService {
 		});
 	};
 
-	// Funcional!
 	static registerNewUser = async (req: Request, res: Response) => {
 		const { name, email, password }: CreateUserDTO = req.body;
 

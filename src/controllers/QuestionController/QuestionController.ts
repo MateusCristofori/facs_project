@@ -1,12 +1,13 @@
 import { Response } from "express";
-import db from "../database/prisma";
-import CreateQuestionDTO from "../dtos/CreateQuestionDTO";
-import { IRequestWithToken } from "../token/IRequestWithToken";
+import db from "../../database/prisma";
+import CreateQuestionDTO from "../../dtos/CreateQuestionDTO";
+import { createPost } from "../../helpers/create_post/createPosts";
+import { NotFoundError } from "../../helpers/errors/ApiErrors";
+import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 const errors = {
 	token: "token de autorização não encontrado",
-	userNotFound: "não foi encontrado nenhum usuário com o id fornecido pelo token",
-
+	userNotFound: "não foi encontrado nenhum usuário com o id fornecido pelo token"
 };
 
 
@@ -26,12 +27,11 @@ export default class QuestionController {
 		});
 	}
       
-	async listQuestions(_: IRequestWithToken, res: Response)  {
+	async listQuestions(req: IRequestWithToken, res: Response)  {
 		const questions = await db.question.findMany();
 		return res.status(200).json({
 			questions
 		});
-
 	}
     
 	async createQuestion (req: IRequestWithToken, res: Response) {
@@ -40,39 +40,44 @@ export default class QuestionController {
 				error: errors.token
 			});
 		}
+		
+		const author_id = req.token.user.id;
+
 		const author = await db.user.findFirst({
 			where: {
-				id: req.token.user.id
+				id: author_id
 			}
 		});
-		if (!author) {
-			return res.status(404).json({
-				error: errors.userNotFound
-			});
+		
+		if(!author) {
+			throw new NotFoundError("Usuário não encontrado!");
 		}
-		const { content, examId }: CreateQuestionDTO = req.body;
-		const newPost = await db.post.create({
-			data: {
-				authorId: author.id,
-				content
-			}
-		});
-		if (!newPost) {
-			return res.status(400).json({
-				error: "não foi possível criar um post com as informações enviadas"
-			});
-		}
+
+		const { content, examId } = req.body;
+
+		const newPost = createPost(author_id, content);
+
+		// const { content, examId }: CreateQuestionDTO = req.body;
+		// const newPost = await db.post.create({
+		// 	data: {
+		// 		authorId: author.id,
+		// 		content
+		// 	}
+		// });
+		
 		const newQuestion = await db.question.create({
 			data: {
-				postId: newPost.id,
+				postId: (await newPost).id,
 				examId,
 			}
 		});
+
 		if (!newQuestion) {
 			return res.status(400).json({
 				error: "não foi possível criar uma questão com as informações enviadas"
 			});
 		}
+
 		return res.status(201).json({
 			newQuestion
 		});

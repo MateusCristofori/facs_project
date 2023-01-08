@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,6 +15,8 @@ model User {
   votes    Vote[]
   Post     Post[]
   Answer   Answer[]
+  Exam     Exam?    @relation(fields: [examId], references: [id])
+  examId   String?
 }
 
 model Post {
@@ -72,9 +71,9 @@ model Vote {
 model Exam {
   id        String     @id @default(uuid())
   questions Question[]
+  User      User[]
 }
 
-// Model de token's inválidos. Ainda vou criar um método de logout.
 model BlackListToken {
   id     String  @id @default(uuid())
   token  String

@@ -24,7 +24,7 @@ export class ForbiddenError extends ApiErrors {
 	}
 }
 
-export class Unauthorized extends ApiErrors {
+export class UnauthorizedError extends ApiErrors {
 	constructor(msg: string) {
 		super(msg, 401);
 	}
