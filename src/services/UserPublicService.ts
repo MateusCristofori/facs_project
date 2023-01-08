@@ -2,7 +2,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import prisma from "../database/prisma";
+import db from "../database/prisma";
 import { CreateUserDTO } from "../dtos/CreateUserDTO";
 import { UserLoginDTO } from "../dtos/UserLoginDTO";
 import { BadRequestError, NotFoundError } from "../helpers/errors/ApiErrors";
@@ -13,13 +13,6 @@ import { CheckUserCredentialsValidation } from "../validations/CheckUserCredenti
 export class UserPublicService {
 
 	// Funcional!
-	static getAllUsers = async (req: Request, res: Response) => {
-		const users = await prisma.user.findMany({select: {id: true, username: true, email: true }});
-
-		res.status(200).json(users);
-	};
-
-	// Funcional!
 	static userLogin = async (req: Request, res: Response) => {
 		const { email, password }: UserLoginDTO = req.body;
 
@@ -27,7 +20,7 @@ export class UserPublicService {
 		CheckUserCredentialsValidation.checkUserEmail(email);
 		CheckUserCredentialsValidation.checkUserPassword(password);
 
-		const user = await prisma.user.findFirst({
+		const user = await db.user.findFirst({
 			where: { email: email }
 		});
 
@@ -72,7 +65,7 @@ export class UserPublicService {
 
 		const passwordHash = await generatedPasswordHash(password);
 
-		const newUser = await prisma.user.create({
+		const newUser = await db.user.create({
 			data: {
 				username: name,
 				email,
