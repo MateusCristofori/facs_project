@@ -13,9 +13,9 @@ publicRouters.route("/login")
 	.post(UserPublicController.userLoginHandler); // log in
 
 publicRouters.route("/answers")
-	.post(answersController.listAnswers);
+	.get(answersController.listAnswers);
 
 publicRouters.route("/answers/:d")
-	.post(answersController.retrieveAnswer);
+	.get(answersController.retrieveAnswer);
 
 export default publicRouters;
