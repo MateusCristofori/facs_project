@@ -15,7 +15,6 @@ model User {
   votes    Vote[]
   Post     Post[]
   Answer   Answer[]
-  Exam     Exam?    @relation(fields: [examId], references: [id])
   examId   String?
 }
 
@@ -30,6 +29,8 @@ model Post {
   children Post[]    @relation("Parent")
   content  String
   Vote     Vote[]
+  Answer   Answer[]
+  Exam     Exam[]
 }
 
 model Answer {
@@ -40,6 +41,8 @@ model Answer {
   Comment    Comment[]
   Question   Question? @relation(fields: [questionId], references: [id])
   questionId String?
+  post       Post      @relation(fields: [postId], references: [id])
+  postId     String
 }
 
 model Comment {
@@ -71,7 +74,8 @@ model Vote {
 model Exam {
   id        String     @id @default(uuid())
   questions Question[]
-  User      User[]
+  post      Post       @relation(fields: [postId], references: [id])
+  postId    String
 }
 
 model BlackListToken {

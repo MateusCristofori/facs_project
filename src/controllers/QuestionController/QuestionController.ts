@@ -3,7 +3,7 @@ import db from "../../database/prisma";
 import { createPost } from "../../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../../token/IRequestWithToken";
 
-export default class QuestionController {
+class QuestionController {
 	async retrieveQuestion (req: IRequestWithToken, res: Response) {
 		const {id} = req.params;
 		if (!id) {
@@ -157,3 +157,5 @@ export default class QuestionController {
 		});
 	}
 }
+
+export default new QuestionController();

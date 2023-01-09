@@ -3,7 +3,7 @@ import UserPublicController from "../controllers/UserPublicController";
 
 const publicRouters = Router();
 
-publicRouters.route("/users")
+publicRouters.route("/register")
 	.post(UserPublicController.registerNewUserHandler); // create User
 
 publicRouters.route("/login")
