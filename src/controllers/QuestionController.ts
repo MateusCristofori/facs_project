@@ -2,12 +2,8 @@ import { Response } from "express";
 import db from "../database/prisma";
 import CreateQuestionDTO from "../dtos/CreateQuestionDTO";
 import { IRequestWithToken } from "../token/IRequestWithToken";
-
-const errors = {
-	token: "token de autorização não encontrado",
-	userNotFound: "não foi encontrado nenhum usuário com o id fornecido pelo token",
-
-};
+import { ApiErrors } from "../helpers/errors/ApiErrors";
+import errors from "../helpers/errorMessages";
 
 
 export default class QuestionController {
@@ -37,7 +33,7 @@ export default class QuestionController {
 	async createQuestion (req: IRequestWithToken, res: Response) {
 		if (!req.token) {
 			return res.status(400).json({
-				error: errors.token
+				
 			});
 		}
 		const author = await db.user.findFirst({
@@ -59,7 +55,7 @@ export default class QuestionController {
 		});
 		if (!newPost) {
 			return res.status(400).json({
-				error: "não foi possível criar um post com as informações enviadas"
+				error: errors.couldNotCreatePost
 			});
 		}
 		const newQuestion = await db.question.create({
@@ -94,7 +90,7 @@ export default class QuestionController {
 		});
 		if (!question) {
 			return res.status(404).json({
-				error: "questão não encontrada"
+				error: errors.questionNotFound
 			});
 		}
 		const author = await db.user.findFirst({
@@ -107,16 +103,13 @@ export default class QuestionController {
 				error: errors.userNotFound
 			});
 		}
-		if (question.post.id !== author.id ) {
+		if (question.post.authorId !== author.id ) {
 			return res.status(403).json({
 				error: "somente o autor da pergunta pode modifica-la"
 			});
 		}
-		const { answerId }: { answerId: string } = req.body; // TODO adicionar um DTO para updates também?
+		const { answerId }: { answerId: string } = req.body;
 
-		// acredito que o único update que faremos numa questão será adicionar a resposta correta, após o recebimento da correção da prova
-		// caso seja necessário modificar o enunciado, podemos usar o endpoint do post, já que este contem o "content", que seria o conteúdo
-		// da questão.
 		const updatedQuestion = await db.question.update({
 			where: {
 				id: question.id
