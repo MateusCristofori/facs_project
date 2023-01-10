@@ -35,7 +35,9 @@ class ExamController {
 			}
 		});
 
-		return res.status(200).json(exams);
+		return res.status(200).json({
+			exams
+		});
 	}
 
 	async createExam(req: IRequestWithToken, res: Response) {
@@ -58,15 +60,17 @@ class ExamController {
 
 		const { content } = req.body;
 
-		const newPost = createPost(author_id, content);
+		const newPost = await createPost(author_id, content);
 
 		const newExam = await db.exam.create({
 			data: {
-				postId: (await newPost).id
+				postId: newPost.id
 			}
 		});
 
-		return res.status(201).json(newExam);
+		return res.status(201).json({
+			newExam
+		});
 	}
 
 	async updateExam(req: IRequestWithToken, res: Response) {
@@ -162,4 +166,4 @@ class ExamController {
 	}
 }
 
-export default new ExamController();
+export default new ExamController;

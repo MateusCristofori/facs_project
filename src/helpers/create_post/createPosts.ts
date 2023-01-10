@@ -7,7 +7,7 @@ export const createPost = async (author_id: string, content: string) => {
 		throw new BadRequestError("Informações inválidas!");
 	}
 
-	return await db.post.create({
+	return db.post.create({
 		data: {
 			authorId: author_id,
 			content

@@ -9,33 +9,36 @@ import { tokenValidation } from "../middlewares/tokenValidation";
 
 const privateRouters = Router();
 
+privateRouters.use(tokenValidation);
+
 privateRouters.route("/exam")
-	.post(tokenValidation, ExamController.createQuestions);
+	.get(ExamController.listExams)
+	.post(ExamController.createExam);
 
 privateRouters.route("/question/:id?")
-	.get(tokenValidation, QuestionController.retrieveQuestion)
-	.get(tokenValidation, QuestionController.listQuestions)
-	.post(tokenValidation, QuestionController.createQuestion)
-	.put(tokenValidation, QuestionController.updateQuestion)
-	.delete(tokenValidation, QuestionController.deleteQuestion);
+	.get(QuestionController.retrieveQuestion)
+	.get(QuestionController.listQuestions)
+	.post(QuestionController.createQuestion)
+	.put(QuestionController.updateQuestion)
+	.delete(QuestionController.deleteQuestion);
 
 privateRouters.route("/answers/:id?")
-	.get(tokenValidation, AnswerController.retrieveAnswer)
-	.get(tokenValidation, AnswerController.listAnswers)
-	.post(tokenValidation, AnswerController.createAnswer)
-	.put(tokenValidation, AnswerController.updateAnswer)
-	.delete(tokenValidation, AnswerController.deleteAnswer);
+	.get(AnswerController.retrieveAnswer)
+	.get(AnswerController.listAnswers)
+	.post(AnswerController.createAnswer)
+	.put(AnswerController.updateAnswer)
+	.delete(AnswerController.deleteAnswer);
 
 privateRouters.route("/comment/:id?")
-	.get(tokenValidation, CommentController.retrieveComment)
-	.get(tokenValidation, CommentController.listComments)
-	.post(tokenValidation, CommentController.createComment)
-	.put(tokenValidation, CommentController.updateComment)
-	.delete(tokenValidation, CommentController.deleteComment);
+	.get(CommentController.retrieveComment)
+	.get(CommentController.listComments)
+	.post(CommentController.createComment)
+	.put(CommentController.updateComment)
+	.delete(CommentController.deleteComment);
 
 // funcional.
 privateRouters.route("/logout")
-	.post(tokenValidation, AuthUserController.userLogout);
+	.post(AuthUserController.userLogout);
 
 
 export default privateRouters;

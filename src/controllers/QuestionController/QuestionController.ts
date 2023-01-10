@@ -4,6 +4,7 @@ import { createPost } from "../../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 class QuestionController {
+
 	async retrieveQuestion (req: IRequestWithToken, res: Response) {
 		const {id} = req.params;
 		if (!id) {
@@ -158,4 +159,4 @@ class QuestionController {
 	}
 }
 
-export default new QuestionController();
+export default new QuestionController;

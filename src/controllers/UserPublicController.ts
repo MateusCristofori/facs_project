@@ -24,6 +24,9 @@ class UserPublicController {
 				username: name,
 				email,
 				password: passwordHash,
+			},
+			select: {
+				password: false
 			}
 		});
 
