@@ -162,7 +162,7 @@ class ExamController {
 			}
 		});
 
-		return res.status(200).json(deletedExam);
+		return res.status(200).json({deletedExam});
 	}
 }
 

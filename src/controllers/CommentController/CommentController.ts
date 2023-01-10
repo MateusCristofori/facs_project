@@ -16,13 +16,13 @@ class CommentController {
 			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
 
-		res.status(200).json(comment);
+		res.status(200).json({comment});
 	}
   
 	async listComments(req: IRequestWithToken, res: Response) {
 		const allComments = await db.comment.findMany({});
 
-		res.status(200).json(allComments);
+		res.status(200).json({allComments});
 	}
 
 	async createComment(req: IRequestWithToken, res: Response) {
@@ -49,7 +49,7 @@ class CommentController {
 			}
 		});
 
-		res.status(201).json(newComment);
+		res.status(201).json({newComment});
 	}
 	
 	async updateComment(req: IRequestWithToken, res: Response) {
@@ -88,7 +88,7 @@ class CommentController {
 			}
 		});
 
-		res.status(200).json(updatedComment);
+		res.status(200).json({updatedComment});
 	}
 
 	async deleteComment(req: IRequestWithToken, res: Response) {
