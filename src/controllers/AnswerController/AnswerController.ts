@@ -15,8 +15,10 @@ class AnswersController {
 		const answer = await db.answer.findFirst({
 			where: { id },
 			include: {
-				Question: true
-			}
+				Question: true,
+				Comment: true,
+				post: true,
+			},
 		});
 
 		if(!answer) {
@@ -29,13 +31,16 @@ class AnswersController {
 	async listAnswers(req: IRequestWithToken, res: Response) {
 		const answers = await db.answer.findMany({
 			include: {
-				user: true
-			}
+				post: true,
+				Comment: true,
+				Question: true
+			},
 		});
 
-		return res.status(200).json(answers);
+		return res.status(200).json({ answers });
 	}
 
+	// Funcional.
 	async createAnswer(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -52,19 +57,23 @@ class AnswersController {
 		}
 
 		const { content, questionId }: CreateaAnswerDTO = req.body;
-		const newPost = createPost(author_id, content);
+		const newPost = await createPost(author_id, content);
 
 		const newAnswer = await db.answer.create({
 			data: {
 				userId: author_id,
-				postId: (await newPost).id,
+				postId: newPost.id,
 				questionId: questionId
+			},
+			include: {
+				Question: true
 			}
 		});
 
-		return res.status(201).json(newAnswer);
+		return res.status(201).json({ newAnswer });
 	}
 
+	// Funcional
 	async updateAnswer(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -79,11 +88,15 @@ class AnswersController {
 		if(!author) {
 			return res.status(404).json({msg: "Usuário não encontrado!"});
 		}
-
-		const { answerId, questionId } = req.body;
+		
+		const answer_id = req.params.id;
+		
+		if(!answer_id) {
+			return res.status(404).json({error: "Resposta não encontrada!"});
+		}
 
 		const answer = await db.answer.findFirst({
-			where: { id: answerId },
+			where: { id: answer_id },
 			include: {
 				post: true
 			}
@@ -97,16 +110,30 @@ class AnswersController {
 			return res.status(403).json({msg: "Apenas o usuário que criou a resposta pode alterá-la"});
 		}
 
-		const updatedAnswer = await db.answer.update({
-			where: { id: answerId },
-			data: {
-				questionId
+		const {  questionId, content } = req.body;
+
+		const question = await db.question.findFirst({
+			where: { id: questionId },
+			include: {
+				post: true
 			}
 		});
 
-		return res.status(200).json(updatedAnswer);
+		if(!question) {
+			return res.status(404).json({error: "Questão não encontrada!"});
+		}
+
+		const updatedQuestion = await db.post.update({
+			where: { id: answer.postId },
+			data: {
+				content
+			}
+		});
+		
+		return res.status(200).json({ updatedQuestion });
 	}
 
+	// Funcional.
 	async deleteAnswer(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -121,7 +148,7 @@ class AnswersController {
 			return res.status(404).json({msg: "Usuário não encontrado!"});
 		}
 
-		const { answerId } = req.body;
+		const answerId  = req.params.id;
 
 		const answer = await db.answer.findFirst({
 			where: { id: answerId },
@@ -138,7 +165,14 @@ class AnswersController {
 			return res.status(403).json({msg: "Apenas o criador da resposta que pode alterá-la."});
 		}
 
-		return res.status(200).json({msg: "Resposta deletada."});
+		const deletedAnswer = await db.answer.delete({
+			where: { id: answerId },
+			include: {
+				post: true
+			}
+		});
+
+		return res.status(200).json({ deletedAnswer });
 	}
 }
 

@@ -4,11 +4,13 @@ import { createPost } from "../../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 class ExamController {
+	// Não funcional.
 	async retrieveExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
 		}
-		const id = req.params.id;
+
+		const { id } = req.params;
 
 		const exam = await db.exam.findFirst({
 			where: { id: id },
@@ -21,9 +23,10 @@ class ExamController {
 			return res.status(404).json({msg: "Prova não encontrada!"});
 		}
 
-		return res.status(200).json(exam);
+		return res.status(200).json({exam});
 	}
 
+	// Funcional.
 	async listExams(req: IRequestWithToken, res: Response) {		
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -31,13 +34,15 @@ class ExamController {
 
 		const exams = await db.exam.findMany({
 			include: {
-				questions: true
-			}
+				questions: true,
+				post: true,
+			},
 		});
 
-		return res.status(200).json(exams);
+		return res.status(200).json({exams});
 	}
 
+	// Funcional.
 	async createExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -58,17 +63,21 @@ class ExamController {
 
 		const { content } = req.body;
 
-		const newPost = createPost(author_id, content);
+		const newPost = await createPost(author_id, content);
 
 		const newExam = await db.exam.create({
 			data: {
-				postId: (await newPost).id
+				postId: newPost.id
+			},
+			include: {
+				post: true
 			}
 		});
 
-		return res.status(201).json(newExam);
+		return res.status(201).json({newExam});
 	}
 
+	// Funcional.
 	async updateExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(200).json({msg: "Token de autorização inválido."});
@@ -84,7 +93,7 @@ class ExamController {
 		});
 	
 		if(!author) {
-			return res.status(200).json({msg: "Usuário não encontrado!"});
+			return res.status(204).json({msg: "Usuário não encontrado!"});
 		}
 		
 		const { examId, content } = req.body;
@@ -108,12 +117,13 @@ class ExamController {
 			where: { id: exam.postId },
 			data: {
 				content
-			}
+			},
 		});
 
-		return res.status(204).json(newPost);
+		return res.status(200).json({ newPost });
 	}
 
+	// Funcional. Precisa terminar de configurar o "onDelete: Cascade" do prisma.
 	async deleteExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido."});
@@ -158,7 +168,7 @@ class ExamController {
 			}
 		});
 
-		return res.status(200).json(deletedExam);
+		return res.status(200).json({deletedExam});
 	}
 }
 

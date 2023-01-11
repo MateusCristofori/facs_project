@@ -5,6 +5,7 @@ import { createPost } from "../../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../../token/IRequestWithToken";
 
 class CommentController {
+	// Todos os métodos de buscar por ID e listagem de recursos devem ser revisados. Mau funcionamento.
 	async retrieveComment(req: IRequestWithToken, res: Response)  {
 		const comment_id = req.params.id;
 
@@ -16,15 +17,22 @@ class CommentController {
 			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
 
-		res.status(200).json(comment);
+		res.status(200).json({ comment });
 	}
-  
+	
+	// Todos os métodos de buscar por ID e listagem de recursos devem ser revisados. Mau funcionamento.
 	async listComments(req: IRequestWithToken, res: Response) {
-		const allComments = await db.comment.findMany({});
+		const allComments = await db.comment.findMany({
+			include: {
+				post: true,
+				Answer: true
+			}
+		});
 
-		res.status(200).json(allComments);
+		res.status(200).json({ allComments });
 	}
 
+	// Funcional.
 	async createComment(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({error: "Token de validação inválido!"});
@@ -39,19 +47,35 @@ class CommentController {
 			return res.status(404).json({error: "Usuário não encontrado!"});
 		}
 
-		const { content }: createCommentDTO = req.body;
+		const { content, answerId }: createCommentDTO = req.body;
 
-		const newPost = createPost(author_id, content);
-
-		const newComment = await db.comment.create({
-			data: {
-				postId: (await newPost).id
+		const answer = await db.answer.findFirst({
+			where: { id: answerId },
+			include: {
+				post: true
 			}
 		});
 
-		res.status(201).json(newComment);
+		if(!answer) {
+			return res.status(404).json({error: "A resposta não existe!"});
+		}
+
+		const newPost = await createPost(author_id, content);
+
+		const newComment = await db.comment.create({
+			data: {
+				answerId: answerId,
+				postId: newPost.id
+			},
+			include: {
+				post: true
+			}
+		});
+
+		res.status(201).json({ newComment });
 	}
 	
+	// Aparentemente funcional. Revisão recomendada.
 	async updateComment(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({error: "Token de autorização inválido!"});
@@ -70,39 +94,74 @@ class CommentController {
 		const comment_id = req.params.id;
 
 		if(!comment_id) {
-			return res.status(404).json({error: "Comentário não encontrado!"});
-
+			return res.status(404).json({error: "ID do comentário necessário!"});
 		}
 
-		const { content }: createCommentDTO = req.body;
-
-		const updatedComment = await db.comment.update({
-			where: {id: comment_id},
-			data: {
-				post: {
-					create: {
-						authorId: author_id,
-						content
-					}
-				}
+		const comment = await db.comment.findFirst({
+			where: { id: comment_id },
+			include: {
+				post: true
 			}
 		});
 
-		res.status(200).json(updatedComment);
+		if(!comment) {
+			return res.status(404).json({error: "Comentário não encontrado!"});
+		}
+
+		if(comment.post.authorId !== author.id) {
+			return res.status(403).json({error: "Apenas o criador do comentário pode alterá-lo!"});
+		}
+
+		const { content, answerId }: createCommentDTO = req.body;
+
+		const answer = await db.answer.findFirst({
+			where: { id: answerId },
+			include: {
+				post: true
+			}
+		});
+
+		if(!answer) {
+			return res.status(404).json({error: "A resposta não existe!"});
+		}
+		
+		const updatedComment = await db.post.update({
+			where: { id: comment.postId },
+			data: {
+				content
+			},
+			include: {
+				Answer: true,
+			}
+		});
+
+		return res.status(200).json({ updatedComment });
 	}
 
+	// Funcional.
 	async deleteComment(req: IRequestWithToken, res: Response) {
+		if(!req.token) {
+			return res.status(403).json({error: "Token de autorização inválido!"});
+		}
+
 		const comment_id = req.params.id;
 
 		if(!comment_id) {
 			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
 
-		const comment = await db.comment.delete({
-			where: { id: comment_id }
+		const deletedComment = await db.comment.delete({
+			where: { id: comment_id },
+			include: {
+				post: true
+			}
 		});
 
-		res.status(200).json({msg: "Comentário deletado!"});
+		if(!deletedComment) {
+			return res.status(404).json({error: "Comentário não encontrado!"});
+		}
+
+		res.status(200).json({ deletedComment });
 	}
 }
 

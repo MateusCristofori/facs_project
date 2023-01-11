@@ -6,7 +6,6 @@ import { CreateUserDTO } from "../dtos/CreateUserDTO";
 import { UserLoginDTO } from "../dtos/UserLoginDTO";
 import { generatedPasswordHash } from "../helpers/generatedPasswordHash";
 
-
 class UserPublicController {
 
 	async registerNewUserHandler(req: Request, res: Response)  {
@@ -24,6 +23,9 @@ class UserPublicController {
 				username: name,
 				email,
 				password: passwordHash,
+			},
+			select: {
+				password: false
 			}
 		});
 
