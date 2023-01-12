@@ -9,10 +9,10 @@ export const tokenValidation = async (req: IRequestWithToken, res: Response, nex
 	const token = BearerToken && BearerToken.split(" ")[1];
 
 	if(!token) {
-		throw new ForbiddenError("Token inválido!");
+		return res.status(403).json({ error: "Token inválido! "});
 	}
 
-	req.token = (jwt.verify(token, process.env.SECRET as string) as IJwtPayload); // Não consegui fazer de outra forma sem ser usando cast em tudo.
+	req.token = (jwt.verify(token, process.env.SECRET as string) as IJwtPayload);
 
 	next();
 };

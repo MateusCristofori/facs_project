@@ -6,6 +6,10 @@ import { CreateaAnswerDTO }  from "../dtos/CreateAnswerDTO";
 
 export default class AnswersController {
 	async retrieveAnswer(req: IRequestWithToken, res: Response) {
+		if(!req.token) {
+			return res.status(403).json({ error: "Token de validação inválido!" });
+		}
+		
 		const id = req.params.id;
 
 		if(!id) {
@@ -25,7 +29,7 @@ export default class AnswersController {
 			return res.status(404).json({msg: "Questão não encontrada!"});
 		}
   
-		return res.status(200).json(answer);
+		return res.status(200).json({ answer });
 	}
 
 	async listAnswers(req: IRequestWithToken, res: Response) {
