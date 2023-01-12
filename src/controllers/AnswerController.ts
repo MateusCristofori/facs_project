@@ -2,7 +2,7 @@ import { IRequestWithToken } from "../token/IRequestWithToken";
 import { Response } from "express";
 import db from "../database/prisma";
 import { createPost } from "../helpers/create_post/createPosts";
-import { CreateaAnswerDTO } from "../dtos/CreateAnswerDTO";
+import { CreateaAnswerDTO }  from "../dtos/CreateAnswerDTO";
 
 export default class AnswersController {
 	async retrieveAnswer(req: IRequestWithToken, res: Response) {

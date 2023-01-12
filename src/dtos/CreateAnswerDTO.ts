@@ -1,4 +1,4 @@
 export interface CreateaAnswerDTO {
-  content: string,
-  questionId: string
+  questionId: string;
+  content: string;
 }

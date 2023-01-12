@@ -5,23 +5,27 @@ import { IRequestWithToken } from "../token/IRequestWithToken";
 
 export default class QuestionController {
 	async retrieveQuestion (req: IRequestWithToken, res: Response) {
+		if(!req.token) {
+			return res.status(403).json({ error: "Token de autorização inválido! "});
+		}
+
 		const id = req.params.id;
 
 		if(!id) {
-			return res.status(404).json({
-				error: "questão não encontrada"
-			});
+			return res.status(404).json({ error: "questão não encontrada" });
 		}
 		const question = await db.question.findFirst({
 			where: { id }
 		});
-		return res.status(200).json({
-			question
-		});
+		
+		return res.status(200).json({ question });
 	}
   
-	// Funcional.
-	async listQuestions(req: IRequestWithToken, res: Response)  {
+	async listQuestions(req: IRequestWithToken, res: Response) {
+		if(!req.token) {
+			return res.status(403).json({ error: "Token de autorização inválido!" });
+		}
+
 		const questions = await db.question.findMany({
 			include: {
 				post: true,
@@ -35,7 +39,7 @@ export default class QuestionController {
 	// Funcional
 	async createQuestion (req: IRequestWithToken, res: Response) {
 		if (!req.token) {
-			return res.status(403).json({error: "token de autorização não encontrado."});
+			return res.status(403).json({ error: "token de autorização não encontrado." });
 		}
 		
 		const author_id = req.token.user.id;
@@ -47,7 +51,7 @@ export default class QuestionController {
 		});
 		
 		if(!author) {
-			return res.status(404).json({error: "Usuário não encontrado!"});
+			return res.status(404).json({ error: "Usuário não encontrado!" });
 		}
 
 		const { content, examId } = req.body;
@@ -65,20 +69,16 @@ export default class QuestionController {
 		});
 
 		if (!newQuestion) {
-			return res.status(400).json({
-				error: "não foi possível criar uma questão com as informações enviadas"
-			});
+			return res.status(400).json({ error: "não foi possível criar uma questão com as informações enviadas" });
 		}
 
-		return res.status(201).json({
-			newQuestion
-		});
+		return res.status(201).json({ newQuestion });
 	}
   
 	// Funcional.
 	async updateQuestion (req: IRequestWithToken, res: Response) {
 		if(!req.token) {
-			return res.status(403).json({error: "Token de autorização inválido!"});
+			return res.status(403).json({ error: "Token de autorização inválido!" });
 		}
 
 		const author_id = req.token.user.id;
@@ -88,7 +88,7 @@ export default class QuestionController {
 		});
 
 		if(!author) {
-			return res.status(404).json({error: "Usuário não encontrado!"});
+			return res.status(404).json({ error: "Usuário não encontrado!" });
 		}
 
 		const question_id = req.params.id;
@@ -102,11 +102,11 @@ export default class QuestionController {
 		});
 
 		if(!question) {
-			return res.status(404).json({error: "Prova não encontrada!"});
+			return res.status(404).json({ error: "Prova não encontrada!" });
 		}
 
 		if(question.post.authorId !== author.id) {
-			return res.status(403).json({error: "Apenas o criador da questão pode alterá-la."});
+			return res.status(403).json({ error: "Apenas o criador da questão pode alterá-la." });
 		}
 
 		const { content, examId } = req.body;
@@ -116,7 +116,7 @@ export default class QuestionController {
 		});
 
 		if(!exam) {
-			return res.status(404).json({error: "Prova não encontrada!"});
+			return res.status(404).json({ error: "Prova não encontrada!" });
 		}
 
 		const newPost = await db.post.update({
@@ -144,7 +144,7 @@ export default class QuestionController {
 		});
 
 		if (!question) {
-			return res.status(404).json("Questão não encontrada!");
+			return res.status(404).json({ error: "Questão não encontrada!" });
 		}
 
 		const author = await db.user.findFirst({
@@ -154,7 +154,7 @@ export default class QuestionController {
 		});
 
 		if (!author) {
-			return res.status(404).json("Usuário não encontrado!");
+			return res.status(404).json({ error: "Usuário não encontrado!" });
 		}
 
 		if (question.post.authorId !== author.id ) {
@@ -167,8 +167,6 @@ export default class QuestionController {
 			}
 		});
 
-		return res.status(202).json({
-			deletedQuestion
-		});
+		return res.status(202).json({ deletedQuestion });
 	}
 }

@@ -9,6 +9,10 @@ publicRouters.route("/register")
 
 	.post(userPublicController.registerNewUserHandler);
 
+publicRouters.route("/users")
+
+	.post(userPublicController.registerNewUserHandler);
+
 publicRouters.route("/login")
 
 	.post(userPublicController.userLoginHandler);
