@@ -7,10 +7,10 @@ const userPublicController = new UserPublicController();
 
 publicRouters.route("/register")
 
-	.post(userPublicController.registerNewUserHandler); // create User
+	.post(userPublicController.registerNewUserHandler);
 
 publicRouters.route("/login")
 
-	.post(userPublicController.userLoginHandler); // log in
+	.post(userPublicController.userLoginHandler);
 
 export default publicRouters;

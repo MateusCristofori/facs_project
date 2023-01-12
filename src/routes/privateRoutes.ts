@@ -33,6 +33,7 @@ privateRouters.route("/exam/:id?")
 	.delete(examController.deleteExam);
 
 privateRouters.route("/questions/:id?")
+
 	.get(questionController.listQuestions)
 
 	.get(questionController.retrieveQuestion)
