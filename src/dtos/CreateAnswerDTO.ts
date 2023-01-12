@@ -1,4 +1,6 @@
-export interface CreateaAnswerDTO {
-  content: string,
-  questionId: string
+interface CreateaAnswerDTO {
+  questionId: string;
+  content: string;
 }
+
+export default CreateaAnswerDTO;

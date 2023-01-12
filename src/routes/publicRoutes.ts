@@ -1,16 +1,22 @@
 import { Router } from "express";
+import AnswersController from "../controllers/AnswerController";
 import UserPublicController from "../controllers/UserPublicController";
 
 const publicRouters = Router();
 
-const userPublicController = new UserPublicController();
+const answersController = new AnswersController();
 
-publicRouters.route("/register")
-
-	.post(userPublicController.registerNewUserHandler); // create User
+publicRouters.route("/users")
+	.post(UserPublicController.registerNewUserHandler); // create User
 
 publicRouters.route("/login")
 
 	.post(userPublicController.userLoginHandler); // log in
+
+publicRouters.route("/answers")
+	.post(answersController.listAnswers);
+
+publicRouters.route("/answers/:d")
+	.post(answersController.retrieveAnswer);
 
 export default publicRouters;
