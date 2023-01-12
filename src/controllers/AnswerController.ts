@@ -1,10 +1,10 @@
-import { IRequestWithToken } from "../../token/IRequestWithToken";
+import { IRequestWithToken } from "../token/IRequestWithToken";
 import { Response } from "express";
-import db from "../../database/prisma";
-import { createPost } from "../../helpers/create_post/createPosts";
-import { CreateaAnswerDTO } from "../../dtos/CreateAnswerDTO";
+import db from "../database/prisma";
+import { createPost } from "../helpers/create_post/createPosts";
+import { CreateaAnswerDTO } from "../dtos/CreateAnswerDTO";
 
-class AnswersController {
+export default class AnswersController {
 	async retrieveAnswer(req: IRequestWithToken, res: Response) {
 		const id = req.params.id;
 
@@ -175,5 +175,3 @@ class AnswersController {
 		return res.status(200).json({ deletedAnswer });
 	}
 }
-
-export default new AnswersController();

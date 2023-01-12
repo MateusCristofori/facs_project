@@ -6,7 +6,7 @@ import { CreateUserDTO } from "../dtos/CreateUserDTO";
 import { UserLoginDTO } from "../dtos/UserLoginDTO";
 import { generatedPasswordHash } from "../helpers/generatedPasswordHash";
 
-class UserPublicController {
+export default class UserPublicController {
 
 	async registerNewUserHandler(req: Request, res: Response)  {
 		
@@ -74,5 +74,3 @@ class UserPublicController {
 		});
 	}
 }
-
-export default new UserPublicController();

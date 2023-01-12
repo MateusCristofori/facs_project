@@ -1,16 +1,16 @@
 import { Response } from "express";
-import db from "../../database/prisma";
-import { createPost } from "../../helpers/create_post/createPosts";
-import { IRequestWithToken } from "../../token/IRequestWithToken";
+import db from "../database/prisma";
+import { createPost } from "../helpers/create_post/createPosts";
+import { IRequestWithToken } from "../token/IRequestWithToken";
 
-class ExamController {
+export default class ExamController {
 	// Não funcional.
 	async retrieveExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
 		}
 
-		const { id } = req.params;
+		const id = req.params.id;
 
 		const exam = await db.exam.findFirst({
 			where: { id: id },
@@ -171,5 +171,3 @@ class ExamController {
 		return res.status(200).json({deletedExam});
 	}
 }
-
-export default new ExamController();

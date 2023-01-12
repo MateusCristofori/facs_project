@@ -1,9 +1,9 @@
 import { Router } from "express";
-import AnswerController from "../controllers/AnswerController/AnswerController";
-import AuthUserController from "../controllers/AuthUserController/AuthUserController";
-import CommentController from "../controllers/CommentController/CommentController";
-import ExamController from "../controllers/ExamController/ExamController";
-import QuestionController from "../controllers/QuestionController/QuestionController";
+import AnswerController from "../controllers/AnswerController";
+import AuthUserController from "../controllers/AuthUserController";
+import CommentController from "../controllers/CommentController";
+import ExamController from "../controllers/ExamController";
+import QuestionController from "../controllers/QuestionController";
 import { tokenValidation } from "../middlewares/tokenValidation";
 
 
@@ -11,38 +11,66 @@ const privateRouters = Router();
 
 privateRouters.use(tokenValidation);
 
+// ----- // 
+const examController = new ExamController();
+const questionController = new QuestionController();
+const commentController = new CommentController();
+const authUserController = new AuthUserController();
+const answerController = new AnswerController();
+
+
 // Métodos de resgatar recursos por ID não estão funcionando como deveriam. Todos eles (aparentemente).
 privateRouters.route("/exam/:id?")
-	.get(ExamController.listExams)
-	.get(ExamController.retrieveExam)
-	.post(ExamController.createExam)
-	.put(ExamController.updateExam)
-	.delete(ExamController.deleteExam);
+
+	.get(examController.listExams)
+
+	.get(examController.retrieveExam)
+
+	.post(examController.createExam)
+
+	.put(examController.updateExam)
+
+	.delete(examController.deleteExam);
 
 privateRouters.route("/questions/:id?")
-	.get(QuestionController.listQuestions)
-	.get(QuestionController.retrieveQuestion)
-	.post(QuestionController.createQuestion)
-	.put(QuestionController.updateQuestion)
-	.delete(QuestionController.deleteQuestion);
+	.get(questionController.listQuestions)
+
+	.get(questionController.retrieveQuestion)
+
+	.post(questionController.createQuestion)
+
+	.put(questionController.updateQuestion)
+
+	.delete(questionController.deleteQuestion);
 
 privateRouters.route("/answers/:id?")
-	.get(AnswerController.listAnswers)
-	.get(AnswerController.retrieveAnswer)
-	.post(AnswerController.createAnswer)
-	.put(AnswerController.updateAnswer)
-	.delete(AnswerController.deleteAnswer);
+
+	.get(answerController.listAnswers)
+
+	.get(answerController.retrieveAnswer)
+
+	.post(answerController.createAnswer)
+
+	.put(answerController.updateAnswer)
+
+	.delete(answerController.deleteAnswer);
 
 privateRouters.route("/comment/:id?")
-	.get(CommentController.listComments)
-	.get(CommentController.retrieveComment)
-	.post(CommentController.createComment)
-	.put(CommentController.updateComment)
-	.delete(CommentController.deleteComment);
+
+	.get(commentController.listComments)
+
+	.get(commentController.retrieveComment)
+
+	.post(commentController.createComment)
+
+	.put(commentController.updateComment)
+
+	.delete(commentController.deleteComment);
 
 // funcional.
 privateRouters.route("/logout")
-	.post(AuthUserController.userLogout);
+
+	.post(authUserController.userLogout);
 
 
 export default privateRouters;

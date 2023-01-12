@@ -42,7 +42,7 @@ model Answer {
   Question   Question? @relation(fields: [questionId], references: [id])
   questionId String?
   post       Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId     String
+  postId     String    @unique
 }
 
 model Comment {
@@ -75,7 +75,7 @@ model Exam {
   id        String     @id @default(uuid())
   questions Question[]
   post      Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String
+  postId    String     @unique
 }
 
 model BlackListToken {

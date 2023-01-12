@@ -3,10 +3,14 @@ import UserPublicController from "../controllers/UserPublicController";
 
 const publicRouters = Router();
 
+const userPublicController = new UserPublicController();
+
 publicRouters.route("/register")
-	.post(UserPublicController.registerNewUserHandler); // create User
+
+	.post(userPublicController.registerNewUserHandler); // create User
 
 publicRouters.route("/login")
-	.post(UserPublicController.userLoginHandler); // log in
+
+	.post(userPublicController.userLoginHandler); // log in
 
 export default publicRouters;

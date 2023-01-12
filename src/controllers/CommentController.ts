@@ -1,10 +1,10 @@
 import { Response } from "express";
-import db from "../../database/prisma";
-import { createCommentDTO } from "../../dtos/CreateCommentDTO";
-import { createPost } from "../../helpers/create_post/createPosts";
-import { IRequestWithToken } from "../../token/IRequestWithToken";
+import db from "../database/prisma";
+import { createCommentDTO } from "../dtos/CreateCommentDTO";
+import { createPost } from "../helpers/create_post/createPosts";
+import { IRequestWithToken } from "../token/IRequestWithToken";
 
-class CommentController {
+export default class CommentController {
 	// Todos os métodos de buscar por ID e listagem de recursos devem ser revisados. Mau funcionamento.
 	async retrieveComment(req: IRequestWithToken, res: Response)  {
 		const comment_id = req.params.id;
@@ -164,5 +164,3 @@ class CommentController {
 		res.status(200).json({ deletedComment });
 	}
 }
-
-export default new CommentController();

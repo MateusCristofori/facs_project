@@ -1,11 +1,11 @@
 import { Response } from "express";
-import db from "../../database/prisma";
-import { createPost } from "../../helpers/create_post/createPosts";
-import { IRequestWithToken } from "../../token/IRequestWithToken";
+import db from "../database/prisma";
+import { createPost } from "../helpers/create_post/createPosts";
+import { IRequestWithToken } from "../token/IRequestWithToken";
 
-class QuestionController {
+export default class QuestionController {
 	async retrieveQuestion (req: IRequestWithToken, res: Response) {
-		const { id } = req.params;
+		const id = req.params.id;
 
 		if(!id) {
 			return res.status(404).json({
@@ -172,54 +172,3 @@ class QuestionController {
 		});
 	}
 }
-
-export default new QuestionController();
-
-// Método anterior!
-		// if (!req.token) {
-		// 	return res.status(403).json({error: "Token de validação não encontrado!"});
-		// }
-
-		// const question = await db.question.findFirst({
-		// 	where: {
-		// 		id: req.params.id
-		// 	},
-		// 	include: {
-		// 		post: true
-		// 	}
-		// });
-		
-		// if (!question) {
-		// 	return res.status(404).json({ error: "Questão não encontrada!" });
-		// }
-
-		// const author = await db.user.findFirst({
-		// 	where: {
-		// 		id: req.token.user.id
-		// 	}
-		// });
-
-		// if (!author) {
-		// 	return res.status(404).json({ error: "Usuário não encontrado!" });
-		// }
-
-		// if (question.post.authorId !== author.id ) {
-		// 	return res.status(403).json({
-		// 		error: "somente o autor da pergunta pode modifica-la"
-		// 	});
-		// }
-
-		// const { answerId }: { answerId: string } = req.body; 
-
-		// const updatedQuestion = await db.question.update({
-		// 	where: {
-		// 		id: question.id
-		// 	},
-		// 	data: {
-		// 		answerId
-		// 	}
-		// });
-
-		// return res.status(204).json({
-		// 	updatedQuestion
-		// });

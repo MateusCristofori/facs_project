@@ -1,8 +1,8 @@
 import { Response } from "express";
-import db from "../../database/prisma";
-import { IRequestWithToken } from "../../token/IRequestWithToken";
+import db from "../database/prisma";
+import { IRequestWithToken } from "../token/IRequestWithToken";
 
-class AuthUserController {
+export default class AuthUserController {
 	async userLogout(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -27,5 +27,3 @@ class AuthUserController {
 		return res.status(200).json({msg: "Deslogado! É necessário logar novamente"});
 	}
 }
-
-export default new AuthUserController();
