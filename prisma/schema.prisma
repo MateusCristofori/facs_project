@@ -15,7 +15,6 @@ model User {
   votes    Vote[]
   Post     Post[]
   Answer   Answer[]
-  Exam     Exam?    @relation(fields: [examId], references: [id])
   examId   String?
 }
 
@@ -31,6 +30,7 @@ model Post {
   content  String
   Vote     Vote[]
   answer   Answer[]
+  Exam     Exam?
 }
 
 model Answer {
@@ -47,7 +47,7 @@ model Answer {
 model Comment {
   id       String  @id @default(uuid())
   answerId String?
-  post     Post    @relation(fields: [postId], references: [id])
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId   String  @unique
 }
 
@@ -55,7 +55,7 @@ model Question {
   id       String   @id @default(uuid())
   exam     Exam     @relation(fields: [examId], references: [id])
   examId   String
-  post     Post     @relation(fields: [postId], references: [id])
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId   String   @unique
   answerId String?
   Answer   Answer[]
@@ -72,7 +72,8 @@ model Vote {
 model Exam {
   id        String     @id @default(uuid())
   questions Question[]
-  User      User[]
+  post      Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String     @unique
 }
 
 model BlackListToken {

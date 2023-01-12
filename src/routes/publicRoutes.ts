@@ -10,7 +10,8 @@ publicRouters.route("/users")
 	.post(UserPublicController.registerNewUserHandler); // create User
 
 publicRouters.route("/login")
-	.post(UserPublicController.userLoginHandler); // log in
+
+	.post(userPublicController.userLoginHandler); // log in
 
 publicRouters.route("/answers")
 	.post(answersController.listAnswers);

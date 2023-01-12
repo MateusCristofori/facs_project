@@ -1,3 +1,4 @@
 export interface createCommentDTO {
-  content: string
+  content: string,
+  answerId: string
 }
