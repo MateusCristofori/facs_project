@@ -5,18 +5,15 @@ import jwt from "jsonwebtoken";
 import db from "../database/prisma";
 import { CreateUserDTO } from "../dtos/CreateUserDTO";
 import { UserLoginDTO } from "../dtos/UserLoginDTO";
-import { BadRequestError, NotFoundError } from "../helpers/errors/ApiErrors";
 import { generatedPasswordHash } from "../helpers/generatedPasswordHash";
 import { CheckUserCredentialsValidation } from "../validations/CheckUserCredentialsValidation";
 
 
 export class UserPublicService {
 
-	// Funcional!
 	static userLogin = async (req: Request, res: Response) => {
 		const { email, password }: UserLoginDTO = req.body;
 
-		// Validações das informações passadas pelo corpo da requisição.
 		CheckUserCredentialsValidation.checkUserEmail(email);
 		CheckUserCredentialsValidation.checkUserPassword(password);
 
@@ -25,13 +22,13 @@ export class UserPublicService {
 		});
 
 		if(!user) {
-			throw new NotFoundError("Usuário não encontrado!");
+			return res.status(404).json({msg: "error"});
 		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
 
 		if(!passwordMatch) {
-			throw new BadRequestError("Senha incorreta!");
+			return res.status(400).json("Senha incorreta!");
 		}
 
 		const token = jwt.sign({
@@ -55,7 +52,6 @@ export class UserPublicService {
 		});
 	};
 
-	// Funcional!
 	static registerNewUser = async (req: Request, res: Response) => {
 		const { name, email, password }: CreateUserDTO = req.body;
 

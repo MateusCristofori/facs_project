@@ -1,10 +1,9 @@
-import "express-async-errors";
 import cors from "cors";
-import express from "express";
 import { config } from "dotenv";
-import publicRouters from "./routes/publicRoutes";
+import express from "express";
+import "express-async-errors";
 import privateRouters from "./routes/privateRoutes";
-import { middlewareError } from "./middlewares/error/middlewareError";
+import publicRouters from "./routes/publicRoutes";
 
 const app = express();
 app.use(cors());
@@ -13,7 +12,6 @@ app.use(express.json());
 app.use(publicRouters);
 app.use(privateRouters);
 // error middleware
-app.use(middlewareError);
 // dotenv
 config();
 

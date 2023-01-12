@@ -1,13 +1,13 @@
 import { Router } from "express";
-import AuthUserController from "../controllers/AuthUserController";
+import AuthUserController from "../controllers/AuthUserController/AuthUserController";
 import { tokenValidation } from "../middlewares/tokenValidation";
 
 
 const privateRouters = Router();
 
 // Rota para testar, inicialmente, a autenticação de usuário.
-privateRouters.route("/dashboard")
-	.get(tokenValidation, AuthUserController.dashboardHandler);
+// privateRouters.route("/dashboard")
+// 	.get(tokenValidation, AuthUserController.dashboardHandler);
 
 
 
