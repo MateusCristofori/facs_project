@@ -1,5 +1,6 @@
 import { Response } from "express";
 import db from "../database/prisma";
+import { CreateExamDTO } from "../dtos/CreateExamDTO";
 import { createPost } from "../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
@@ -34,10 +35,14 @@ export default class ExamController {
 
 		const exams = await db.exam.findMany({
 			include: {
-				questions: true,
 				post: true,
+				questions: true,
 			},
 		});
+
+		if(!exams) {
+			return res.status(404).json({ error: "Nenhuma prova foi encontrada!" });
+		}
 
 		return res.status(200).json({exams});
 	}
@@ -61,7 +66,7 @@ export default class ExamController {
 			return res.status(404).json({msg: "Usuário não encontrado!"});
 		}
 
-		const { content } = req.body;
+		const { content }: CreateExamDTO  = req.body;
 
 		const newPost = await createPost(author_id, content);
 
@@ -164,7 +169,10 @@ export default class ExamController {
 		
 		const deletedExam = await db.exam.delete({
 			where: {
-				id: exam_id
+				id: exam_id,
+			},
+			include: {
+				questions: true
 			}
 		});
 

@@ -19,8 +19,6 @@ export default class AnswersController {
 		const answer = await db.answer.findFirst({
 			where: { id },
 			include: {
-				Question: true,
-				Comment: true,
 				post: true,
 			},
 		});
@@ -36,8 +34,6 @@ export default class AnswersController {
 		const answers = await db.answer.findMany({
 			include: {
 				post: true,
-				Comment: true,
-				Question: true
 			},
 		});
 
@@ -69,9 +65,6 @@ export default class AnswersController {
 				postId: newPost.id,
 				questionId: questionId
 			},
-			include: {
-				Question: true
-			}
 		});
 
 		return res.status(201).json({ newAnswer });

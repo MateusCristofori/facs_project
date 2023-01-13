@@ -11,7 +11,6 @@ app.use(express.json());
 // rotas
 app.use(publicRouters);
 app.use(privateRouters);
-// error middleware
 // dotenv
 config();
 

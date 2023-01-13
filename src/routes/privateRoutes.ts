@@ -20,9 +20,11 @@ const answerController = new AnswerController();
 
 
 // Métodos de resgatar recursos por ID não estão funcionando como deveriam. Todos eles (aparentemente).
-privateRouters.route("/exam")
+privateRouters.route("/exam/:id?")
 
 	.get(examController.listExams)
+
+	.get(examController.retrieveExam)
 
 	.post(examController.createExam)
 
@@ -30,13 +32,11 @@ privateRouters.route("/exam")
 
 	.delete(examController.deleteExam);
 
-	privateRouters.route("/exam/:id")
-		.get(examController.retrieveExam);
-		
-
-privateRouters.route("/questions")
+privateRouters.route("/questions/:id?")
 
 	.get(questionController.listQuestions)
+
+	.get(questionController.retrieveQuestion)
 
 	.post(questionController.createQuestion)
 
@@ -44,13 +44,11 @@ privateRouters.route("/questions")
 
 	.delete(questionController.deleteQuestion);
 
-	privateRouters.route("/questions/:id")
-		.get(questionController.retrieveQuestion);
-
-
-privateRouters.route("/answers")
+privateRouters.route("/answers/:id?")
 
 	.get(answerController.listAnswers)
+
+	.get(answerController.retrieveAnswer)
 
 	.post(answerController.createAnswer)
 
@@ -58,11 +56,7 @@ privateRouters.route("/answers")
 
 	.delete(answerController.deleteAnswer);
 
-	privateRouters.route("/answers/:id")
-		.get(answerController.retrieveAnswer);
-	
-
-privateRouters.route("/comment/")
+privateRouters.route("/comment/:id?")
 
 	.get(commentController.listComments)
 
@@ -74,12 +68,10 @@ privateRouters.route("/comment/")
 
 	.delete(commentController.deleteComment);
 
-	privateRouters.route("/comment/:id")
-		.get(commentController.retrieveComment);
-
-
+// funcional.
 privateRouters.route("/logout")
 
 	.post(authUserController.userLogout);
+
 
 export default privateRouters;

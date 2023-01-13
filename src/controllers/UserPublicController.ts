@@ -16,6 +16,10 @@ export default class UserPublicController {
 			return res.status(400).json({msg: "Os campos de 'nome', 'email' e 'senha' precisam ser preenchidos."});
 		}
 
+		if(!email.includes("@")) {
+			return res.status(400).json({ error: "O email cadastrado precisa ser válido! "});
+		}
+
 		const passwordHash = await generatedPasswordHash(password);
 
 		const newUser = await db.user.create({
@@ -25,11 +29,13 @@ export default class UserPublicController {
 				password: passwordHash,
 			},
 			select: {
-				password: false
+				id: true,
+				username: true,
+				email: true
 			}
 		});
 
-		return res.status(201).json(newUser);
+		return res.status(201).json({ newUser });
 	}
 
 	async userLoginHandler(req: Request, res: Response) {

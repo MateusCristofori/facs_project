@@ -25,7 +25,6 @@ export default class CommentController {
 		const allComments = await db.comment.findMany({
 			include: {
 				post: true,
-				Answer: true
 			}
 		});
 
@@ -130,9 +129,6 @@ export default class CommentController {
 			data: {
 				content
 			},
-			include: {
-				Answer: true,
-			}
 		});
 
 		return res.status(200).json({ updatedComment });

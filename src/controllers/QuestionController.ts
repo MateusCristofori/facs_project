@@ -1,5 +1,6 @@
 import { Response } from "express";
 import db from "../database/prisma";
+import CreateQuestionDTO from "../dtos/CreateQuestionDTO";
 import { createPost } from "../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
@@ -33,10 +34,13 @@ export default class QuestionController {
 			}
 		});
 
+		if(!questions) {
+			return res.status(404).json({ error: "Nenhuma questão foi encontrada." });
+		}
+
 		return res.status(200).json({ questions });
 	}
   
-	// Funcional
 	async createQuestion (req: IRequestWithToken, res: Response) {
 		if (!req.token) {
 			return res.status(403).json({ error: "token de autorização não encontrado." });
@@ -54,7 +58,7 @@ export default class QuestionController {
 			return res.status(404).json({ error: "Usuário não encontrado!" });
 		}
 
-		const { content, examId } = req.body;
+		const { content, examId }: CreateQuestionDTO = req.body;
 
 		const newPost = await createPost(author_id, content);
 
