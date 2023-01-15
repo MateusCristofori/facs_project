@@ -169,6 +169,12 @@ export default class AnswersController {
 			}
 		});
 
+		const deletedPost = await db.post.delete({
+			where: {
+				id: answer.postId
+			}
+		});
+
 		return res.status(200).json({ deletedAnswer });
 	}
 }

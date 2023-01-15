@@ -142,8 +142,15 @@ export default class CommentController {
 
 		const comment_id = req.params.id;
 
-		if(!comment_id) {
-			return res.status(404).json({error: "Comentário não encontrado!"});
+		const comment = await db.comment.findFirst({
+			where: { id: comment_id },
+			include: {
+				post: true
+			}
+		})
+
+		if(!comment) {
+			return res.status(404).json({ error: "Comentário não encontrado." });
 		}
 
 		const deletedComment = await db.comment.delete({
@@ -153,6 +160,12 @@ export default class CommentController {
 			}
 		});
 
+		const deletedPost = await db.post.delete({
+			where: {
+				id: comment.postId
+			}
+		});
+		
 		if(!deletedComment) {
 			return res.status(404).json({error: "Comentário não encontrado!"});
 		}
