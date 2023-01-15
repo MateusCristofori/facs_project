@@ -5,7 +5,6 @@ import { createPost } from "../helpers/create_post/createPosts";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
 export default class ExamController {
-	// Não funcional.
 	async retrieveExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -24,10 +23,9 @@ export default class ExamController {
 			return res.status(404).json({msg: "Prova não encontrada!"});
 		}
 
-		return res.status(200).json({exam});
+		return res.status(200).json({ exam });
 	}
 
-	// Funcional.
 	async listExams(req: IRequestWithToken, res: Response) {		
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -44,10 +42,9 @@ export default class ExamController {
 			return res.status(404).json({ error: "Nenhuma prova foi encontrada!" });
 		}
 
-		return res.status(200).json({exams});
+		return res.status(200).json({ exams });
 	}
 
-	// Funcional.
 	async createExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido!"});
@@ -72,17 +69,16 @@ export default class ExamController {
 
 		const newExam = await db.exam.create({
 			data: {
-				postId: newPost.id
+				postId: newPost.id,
 			},
 			include: {
 				post: true
 			}
 		});
 
-		return res.status(201).json({newExam});
+		return res.status(201).json({ newExam });
 	}
 
-	// Funcional.
 	async updateExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(200).json({msg: "Token de autorização inválido."});
@@ -128,7 +124,7 @@ export default class ExamController {
 		return res.status(200).json({ newPost });
 	}
 
-	// Funcional. Precisa terminar de configurar o "onDelete: Cascade" do prisma.
+	// O método está retornando um erro, porém está funcionando normalmente. O "Exam" e o "Post" estão sendo apagados normalmente mesmo com um erro sendo retornado
 	async deleteExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido."});
@@ -148,10 +144,6 @@ export default class ExamController {
 
 		const exam_id = req.params.id;
 
-		if(!exam_id) {
-			return res.status(404).json({msg: "Prova não encontrada!"});
-		}
-
 		const exam = await db.exam.findFirst({
 			where: { id : exam_id },
 			include: {
@@ -168,14 +160,20 @@ export default class ExamController {
 		}
 		
 		const deletedExam = await db.exam.delete({
-			where: {
+			where: { 
 				id: exam_id,
 			},
 			include: {
-				questions: true
+				post: true
 			}
 		});
 
-		return res.status(200).json({deletedExam});
+		const deletedPost = await db.post.delete({
+			where: {
+				id: exam.postId
+			}
+		});
+
+		return res.status(200).json({ deletedExam });
 	}
 }

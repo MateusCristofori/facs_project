@@ -164,10 +164,19 @@ export default class QuestionController {
 		if (question.post.authorId !== author.id ) {
 			return res.status(403).json({ error: "Somente o autor da pergunta pode modifica-la." });
 		}
-
+		
 		const deletedQuestion = await db.question.delete({
 			where: {
 				id: question.id
+			},
+			include: {
+				post: true
+			}
+		});
+		
+		const deletedPost = await db.post.delete({
+			where: {
+				id: question.postId
 			}
 		});
 
