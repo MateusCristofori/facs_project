@@ -2,6 +2,7 @@ import { Response } from "express";
 import db from "../database/prisma";
 import { CreateExamDTO } from "../dtos/CreateExamDTO";
 import { createPost } from "../helpers/create_post/createPosts";
+import { deletePost } from "../helpers/delete_post/deletePost";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
 export default class ExamController {
@@ -124,7 +125,6 @@ export default class ExamController {
 		return res.status(200).json({ newPost });
 	}
 
-	// O método está retornando um erro, porém está funcionando normalmente. O "Exam" e o "Post" estão sendo apagados normalmente mesmo com um erro sendo retornado
 	async deleteExam(req: IRequestWithToken, res: Response) {
 		if(!req.token) {
 			return res.status(403).json({msg: "Token de autorização inválido."});
@@ -164,15 +164,11 @@ export default class ExamController {
 				id: exam_id,
 			},
 			include: {
-				post: true
+				post: true,
 			}
 		});
 
-		const deletedPost = await db.post.delete({
-			where: {
-				id: exam.postId
-			}
-		});
+		await deletePost(exam.postId);
 
 		return res.status(200).json({ deletedExam });
 	}

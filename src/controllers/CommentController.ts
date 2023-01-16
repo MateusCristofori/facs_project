@@ -2,6 +2,7 @@ import { Response } from "express";
 import db from "../database/prisma";
 import { createCommentDTO } from "../dtos/CreateCommentDTO";
 import { createPost } from "../helpers/create_post/createPosts";
+import { deletePost } from "../helpers/delete_post/deletePost";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
 export default class CommentController {
@@ -160,15 +161,7 @@ export default class CommentController {
 			}
 		});
 
-		const deletedPost = await db.post.delete({
-			where: {
-				id: comment.postId
-			}
-		});
-		
-		if(!deletedComment) {
-			return res.status(404).json({error: "Comentário não encontrado!"});
-		}
+		await deletePost(comment.postId);
 
 		res.status(200).json({ deletedComment });
 	}

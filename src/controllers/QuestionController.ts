@@ -2,6 +2,7 @@ import { Response } from "express";
 import db from "../database/prisma";
 import CreateQuestionDTO from "../dtos/CreateQuestionDTO";
 import { createPost } from "../helpers/create_post/createPosts";
+import { deletePost } from "../helpers/delete_post/deletePost";
 import { IRequestWithToken } from "../token/IRequestWithToken";
 
 export default class QuestionController {
@@ -174,11 +175,7 @@ export default class QuestionController {
 			}
 		});
 		
-		const deletedPost = await db.post.delete({
-			where: {
-				id: question.postId
-			}
-		});
+		await deletePost(question.postId);
 
 		return res.status(202).json({ deletedQuestion });
 	}

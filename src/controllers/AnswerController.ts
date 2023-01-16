@@ -3,6 +3,7 @@ import { Response } from "express";
 import db from "../database/prisma";
 import { createPost } from "../helpers/create_post/createPosts";
 import { CreateaAnswerDTO }  from "../dtos/CreateAnswerDTO";
+import { deletePost } from "../helpers/delete_post/deletePost";
 
 export default class AnswersController {
 	async retrieveAnswer(req: IRequestWithToken, res: Response) {
@@ -169,11 +170,7 @@ export default class AnswersController {
 			}
 		});
 
-		const deletedPost = await db.post.delete({
-			where: {
-				id: answer.postId
-			}
-		});
+		await deletePost(answer.postId);
 
 		return res.status(200).json({ deletedAnswer });
 	}
